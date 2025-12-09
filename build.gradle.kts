@@ -15,6 +15,16 @@ kotlin {
     jvmToolchain(17)
 }
 
+application {
+    mainClass.set("com.seuapp.financas.ApplicationKt")
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("app.jar")
+    }
+}
+
 dependencies {
     // Ktor Core
     implementation("io.ktor:ktor-server-core-jvm")
