@@ -6,5 +6,5 @@ RUN gradle build --no-daemon
 FROM eclipse-temurin:17-jre-jammy
 EXPOSE 8080
 RUN mkdir /app
-COPY --from=build /home/gradle/src/build/libs/*-all.jar /app/app.jar
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/app.jar
 ENTRYPOINT ["java","-jar","/app/app.jar"]
