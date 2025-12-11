@@ -21,6 +21,12 @@ ktor {
     }
 }
 
+tasks {
+    shadowJar {
+        archiveFileName.set("financas-backend-all.jar")
+        mergeServiceFiles()
+    }
+}
 dependencies {
     // Ktor Core
     implementation("io.ktor:ktor-server-core-jvm")
