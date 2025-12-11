@@ -11,10 +11,6 @@ repositories {
     mavenCentral()
 }
 
-kotlin {
-    jvmToolchain(17)
-}
-
 application {
     mainClass.set("com.seuapp.financas.ApplicationKt")
 }
