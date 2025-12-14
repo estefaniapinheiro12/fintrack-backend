@@ -12,7 +12,7 @@ repositories {
 }
 
 application {
-    mainClass.set("com.seuapp.financas.ApplicationKt")
+    mainClass.set("finance.ApplicationKt")
 }
 
 ktor {
