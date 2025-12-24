@@ -1,9 +1,6 @@
 package finance
 
 import finance.models.Users
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
-import io.ktor.server.application.*
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -13,7 +10,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureDatabase() {
     val dbUrl = System.getenv("DATABASE_URL") 
-        ?: "jdbc:postgresql://localhost:5432/fintrack_dev" // Fallback para dev local
+        ?: "jdbc:postgresql://localhost:5432/fintrack_dev"
     
     val config = HikariConfig().apply {
         jdbcUrl = if (dbUrl.startsWith("postgres://")) {
@@ -32,9 +29,9 @@ fun Application.configureDatabase() {
     }
     
     val dataSource = HikariDataSource(config)
-    val database = Database.connect(dataSource)
+    Database.connect(dataSource)
     
-    transaction(database) {
+    transaction {
         SchemaUtils.create(Users)
     }
 }
