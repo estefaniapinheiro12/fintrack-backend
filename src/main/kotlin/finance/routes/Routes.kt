@@ -3,7 +3,6 @@ package finance.routes
 import finance.models.ErrorResponse
 import finance.models.SuccessResponse
 import finance.models.UserRegistrationRequest
-import finance.models.UserLoginRequest
 import finance.services.UserService
 import finance.services.ValidationException
 import io.ktor.server.application.*
@@ -28,7 +27,6 @@ fun Application.configureRouting() {
         }
 
         route("/api/auth") {
-            // REGISTRO (já existia)
             post("/register") {
                 try {
                     val request = call.receive<UserRegistrationRequest>()
@@ -60,51 +58,6 @@ fun Application.configureRouting() {
                                     call.respond(
                                         HttpStatusCode.InternalServerError,
                                         ErrorResponse(error = "Erro ao cadastrar usuário")
-                                    )
-                                }
-                            }
-                        }
-                    )
-                } catch (e: Exception) {
-                    call.respond(
-                        HttpStatusCode.BadRequest,
-                        ErrorResponse(error = "Dados inválidos")
-                    )
-                }
-            }
-
-            // LOGIN (NOVO!) ⬅️
-            post("/login") {
-                try {
-                    val request = call.receive<UserLoginRequest>()
-
-                    val result = userService.loginUser(request)
-
-                    result.fold(
-                        onSuccess = { user ->
-                            call.respond(
-                                HttpStatusCode.OK,
-                                SuccessResponse(
-                                    message = "Login realizado com sucesso!",
-                                    user = user
-                                )
-                            )
-                        },
-                        onFailure = { error ->
-                            when (error) {
-                                is ValidationException -> {
-                                    call.respond(
-                                        HttpStatusCode.Unauthorized,
-                                        ErrorResponse(
-                                            error = error.errors.first(),
-                                            details = null
-                                        )
-                                    )
-                                }
-                                else -> {
-                                    call.respond(
-                                        HttpStatusCode.InternalServerError,
-                                        ErrorResponse(error = "Erro ao fazer login")
                                     )
                                 }
                             }
