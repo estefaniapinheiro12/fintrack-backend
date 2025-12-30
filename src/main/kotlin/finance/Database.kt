@@ -14,19 +14,16 @@ fun Application.configureDatabase() {
         ?: "jdbc:postgresql://localhost:5432/fintrack_dev"
     
     val config = HikariConfig().apply {
-        // Parse correto da URL do Neon
         if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
             val uri = URI(dbUrl.replace("postgres://", "postgresql://"))
             
             jdbcUrl = "jdbc:postgresql://${uri.host}:${uri.port}${uri.path}"
-            username = uri.userInfo?.split(":")?.get(0)
-            password = uri.userInfo?.split(":")?.get(1)
+            username = uri.userInfo?.split(":")?.getOrNull(0) ?: ""
+            password = uri.userInfo?.split(":")?.getOrNull(1) ?: ""
             
-            // SSL obrigatório para Neon
             addDataSourceProperty("ssl", "true")
             addDataSourceProperty("sslmode", "require")
         } else {
-            // Já está no formato JDBC
             jdbcUrl = dbUrl
         }
         
@@ -39,8 +36,11 @@ fun Application.configureDatabase() {
     }
     
     val dataSource = HikariDataSource(config)
-    Database.connect(dataSource)
     
+    // Conecta explicitamente passando o datasource
+    Database.connect(datasource = dataSource)
+    
+    // Cria as tabelas
     transaction {
         SchemaUtils.create(Users)
     }
