@@ -44,10 +44,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.46.0")
     implementation("org.jetbrains.exposed:exposed-java-time:0.46.0")
     
-    // Database Driver - PostgreSQL
-    implementation("org.postgresql:postgresql:42.7.1")
+    // Database Driver - PostgreSQL (VERSÃO ATUALIZADA!)
+    implementation("org.postgresql:postgresql:42.7.4")
     
-    // HikariCP - Pool de Conexões ← ESTA LINHA É ESSENCIAL!
+    // HikariCP - Pool de Conexões
     implementation("com.zaxxer:HikariCP:5.1.0")
     
     // Segurança - BCrypt
