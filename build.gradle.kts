@@ -2,7 +2,6 @@ plugins {
     kotlin("jvm") version "1.9.22"
     id("io.ktor.plugin") version "2.3.7"
     kotlin("plugin.serialization") version "1.9.22"
-    id("com.github.johnrengelman.shadow") version "8.1.1" 
 }
 
 group = "com.seuapp.financas"
@@ -12,6 +11,10 @@ repositories {
     mavenCentral()
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 application {
     mainClass.set("finance.ApplicationKt")
 }
@@ -19,13 +22,6 @@ application {
 ktor {
     fatJar {
         archiveFileName.set("app.jar")
-    }
-}
-
-tasks {
-    shadowJar {
-        archiveFileName.set("financas-backend-all.jar")
-        mergeServiceFiles()
     }
 }
 
@@ -48,10 +44,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.46.0")
     implementation("org.jetbrains.exposed:exposed-java-time:0.46.0")
     
-    // Database Driver - PostgreSQL (REMOVA O H2!)
-    implementation("org.postgresql:postgresql:42.7.1")
+    // Database Driver - PostgreSQL (VERSÃO ATUALIZADA!)
+    implementation("org.postgresql:postgresql:42.7.4")
     
-    // HikariCP - Pool de Conexões (ADICIONE!)
+    // HikariCP - Pool de Conexões
     implementation("com.zaxxer:HikariCP:5.1.0")
     
     // Segurança - BCrypt
