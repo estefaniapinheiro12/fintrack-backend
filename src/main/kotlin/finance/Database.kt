@@ -12,19 +12,57 @@ fun Application.configureDatabase() {
     val dbUrl = System.getenv("DATABASE_URL") 
         ?: throw IllegalStateException("DATABASE_URL não configurada")
     
-    // Parse manual da URL do Neon
+    println("DEBUG: DATABASE_URL = $dbUrl")
+    
+    // Remove prefixos jdbc: se existirem
     val cleanUrl = dbUrl
+        .replace("jdbc:postgresql://", "")
+        .replace("jdbc:postgres://", "")
         .replace("postgres://", "")
         .replace("postgresql://", "")
+        .removeSuffix("?sslmode=require")
+        .trim()
     
-    val (credentials, hostAndDb) = cleanUrl.split("@")
-    val (username, password) = credentials.split(":")
-    val (hostPort, database) = hostAndDb.split("/")
-    val (host, port) = if (hostPort.contains(":")) {
-        hostPort.split(":").let { it[0] to it[1].toInt() }
-    } else {
-        hostPort to 5432
+    println("DEBUG: cleanUrl = $cleanUrl")
+    
+    // Parse: user:pass@host:port/database
+    val parts = cleanUrl.split("@")
+    if (parts.size != 2) {
+        throw IllegalStateException("URL inválida: formato esperado user:pass@host:port/db")
     }
+    
+    val credentials = parts[0]
+    val hostAndDb = parts[1]
+    
+    val credParts = credentials.split(":")
+    if (credParts.size != 2) {
+        throw IllegalStateException("Credenciais inválidas")
+    }
+    
+    val username = credParts[0]
+    val password = credParts[1]
+    
+    val dbParts = hostAndDb.split("/")
+    if (dbParts.size != 2) {
+        throw IllegalStateException("Host/DB inválidos")
+    }
+    
+    val hostPort = dbParts[0]
+    val database = dbParts[1]
+    
+    val host: String
+    val port: Int
+    
+    if (hostPort.contains(":")) {
+        val hp = hostPort.split(":")
+        host = hp[0]
+        port = hp[1].toInt()
+    } else {
+        host = hostPort
+        port = 5432
+    }
+    
+    println("DEBUG: host=$host, port=$port, database=$database, username=$username")
     
     val config = HikariConfig().apply {
         jdbcUrl = "jdbc:postgresql://$host:$port/$database"
