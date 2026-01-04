@@ -2,6 +2,8 @@ package finance.routes
 
 import finance.models.ErrorResponse
 import finance.models.SuccessResponse
+import finance.models.LoginRequest
+import finance.models.LoginResponse
 import finance.models.UserRegistrationRequest
 import finance.services.UserService
 import finance.services.ValidationException
@@ -27,10 +29,10 @@ fun Application.configureRouting() {
         }
 
         route("/api/auth") {
+            // REGISTRO
             post("/register") {
                 try {
                     val request = call.receive<UserRegistrationRequest>()
-
                     val result = userService.registerUser(request)
 
                     result.fold(
@@ -58,6 +60,50 @@ fun Application.configureRouting() {
                                     call.respond(
                                         HttpStatusCode.InternalServerError,
                                         ErrorResponse(error = "Erro ao cadastrar usuário")
+                                    )
+                                }
+                            }
+                        }
+                    )
+                } catch (e: Exception) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ErrorResponse(error = "Dados inválidos")
+                    )
+                }
+            }
+
+            // LOGIN (NOVO!)
+            post("/login") {
+                try {
+                    val request = call.receive<LoginRequest>()
+                    val result = userService.loginUser(request)
+
+                    result.fold(
+                        onSuccess = { user ->
+                            call.respond(
+                                HttpStatusCode.OK,
+                                LoginResponse(
+                                    message = "Login realizado com sucesso!",
+                                    user = user
+                                )
+                            )
+                        },
+                        onFailure = { error ->
+                            when (error) {
+                                is ValidationException -> {
+                                    call.respond(
+                                        HttpStatusCode.Unauthorized,
+                                        ErrorResponse(
+                                            error = error.errors.firstOrNull() ?: "Credenciais inválidas",
+                                            details = null
+                                        )
+                                    )
+                                }
+                                else -> {
+                                    call.respond(
+                                        HttpStatusCode.InternalServerError,
+                                        ErrorResponse(error = "Erro ao fazer login")
                                     )
                                 }
                             }
