@@ -11,7 +11,7 @@ object Users : Table() {
     val email = varchar("email", 255).uniqueIndex()
     val passwordHash = varchar("password_hash", 255)
     val createdAt = datetime("created_at").default(LocalDateTime.now())
-
+    
     override val primaryKey = PrimaryKey(id)
 }
 
@@ -24,11 +24,23 @@ data class UserRegistrationRequest(
 )
 
 @Serializable
+data class LoginRequest(
+    val email: String,
+    val password: String
+)
+
+@Serializable
 data class UserResponse(
     val id: Int,
     val fullName: String,
     val email: String,
     val createdAt: String
+)
+
+@Serializable
+data class LoginResponse(
+    val message: String,
+    val user: UserResponse
 )
 
 @Serializable
