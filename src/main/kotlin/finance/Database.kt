@@ -1,6 +1,8 @@
 package finance
 
 import finance.models.Users
+import finance.models.Categories
+import finance.models.Transactions
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -14,7 +16,6 @@ fun Application.configureDatabase() {
     
     println("DEBUG: DATABASE_URL = $dbUrl")
     
-    // Remove prefixos jdbc: se existirem
     val cleanUrl = dbUrl
         .replace("jdbc:postgresql://", "")
         .replace("jdbc:postgres://", "")
@@ -25,7 +26,6 @@ fun Application.configureDatabase() {
     
     println("DEBUG: cleanUrl = $cleanUrl")
     
-    // Parse: user:pass@host:port/database
     val parts = cleanUrl.split("@")
     if (parts.size != 2) {
         throw IllegalStateException("URL inválida: formato esperado user:pass@host:port/db")
@@ -84,6 +84,7 @@ fun Application.configureDatabase() {
     Database.connect(datasource = dataSource)
     
     transaction {
-        SchemaUtils.create(Users)
+        // Criar todas as tabelas
+        SchemaUtils.create(Users, Categories, Transactions)
     }
 }
