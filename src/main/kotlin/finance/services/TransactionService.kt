@@ -3,6 +3,7 @@ package finance.services
 import finance.models.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
