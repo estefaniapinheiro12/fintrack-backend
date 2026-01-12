@@ -5,7 +5,6 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class TransactionService {
     
@@ -158,12 +157,12 @@ class TransactionService {
         }
     }
     
-    // Deletar transação
+    // Deletar transação - CORRIGIDO
     fun deleteTransaction(userId: Int, transactionId: Int): Result<Boolean> {
         return try {
             transaction {
                 val deleted = Transactions.deleteWhere { 
-                    (Transactions.id eq transactionId) and (Transactions.userId eq userId)
+                    (id eq transactionId) and (Transactions.userId eq userId)
                 }
                 
                 if (deleted > 0) {
